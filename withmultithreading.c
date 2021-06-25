@@ -24,7 +24,6 @@ int count;
 int port_state[END - START];
 
 void *ThreadingFun(void* arg){
-	pthread_detach(pthread_self());
 	struct arguments *par = arg;
         //par.
 	int c;
@@ -37,7 +36,7 @@ void *ThreadingFun(void* arg){
         port_state[par->count - START] = 1;
 	//printf("%d portu acik \n", par->i);
 	else 
-        port_state[par->count - START] = 0;
+        port_state[par->count - START] = 2;
         //printf("%d portu kapali \n", par->i);
 	pthread_exit(NULL);
 }
@@ -74,7 +73,7 @@ int main(void)
 
         pthread_create(&tid, NULL, ThreadingFun, &Parameters);
     }
-    sleep(60);
+    sleep(80);
 for(int pcounter = START; pcounter< END; pcounter++){
 printf(" port %d : %d \n", pcounter, port_state[pcounter-START]);
 }
