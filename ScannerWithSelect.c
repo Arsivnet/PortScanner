@@ -1,13 +1,15 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <unistd.h>
 #define DOMAIN "www.google.com" //owner of the ports we're checking.
-#define START 0 //start range of ports
+#define START 75 //start range of ports
 #define END 100 //last port we're going to check
 
 
@@ -17,8 +19,13 @@ int main(void)
     struct addrinfo hints; //hints basically determines which sockets get to be in res.
     struct addrinfo *res; //sockets we get from getaddrinfo, restricted by the attributes we specified in hints.
     int sockfd, socket_flags;
-	/*struct timeval *timeout;
-	timeout->tv_sec = 3;*/
+	struct timeval before;
+	struct timeval after;
+	gettimeofday(&before, NULL);
+	sleep(2);
+	gettimeofday(&after, NULL);
+	after.tv_sec -= before.tv_sec;
+	after.tv_usec -= before.tv_usec;
     memset(&hints, 0, sizeof hints);
 
     hints.ai_family = AF_INET; //We only want IPV4 sockets in res. So we specify this in hints. Use AF_INET6 for IPV6 and AF_UNSPEC for both.
@@ -36,22 +43,24 @@ int main(void)
         printf("%d portu kontrol ediliyor\n ",i);
 	socket_flags = fcntl(sockfd, F_GETFL, NULL); //we get the socket flags
 	fcntl (sockfd, F_SETFL, O_NONBLOCK); //set the socket flags to be NONBLOCKING
-	c = connect(sockfd, res->ai_addr, res->ai_addrlen);
-        /*if( c = connect(sockfd, res->ai_addr, res->ai_addrlen) < 0){
-	if(errno!=EINPROGRESS)
-		c = 1;
+	//c = connect(sockfd, res->ai_addr, res->ai_addrlen);
+        if( c = connect(sockfd, res->ai_addr, res->ai_addrlen) < 0){
+	if(errno==EINPROGRESS){
 
-	else{
 	FD_ZERO(&wait_set);
 	FD_SET(sockfd, &wait_set);
-	c = select(sockfd, NULL, &wait_set, NULL, timeout);}
-	} */
-        if(c != -1)
-        {
-            printf("%d Port açık \n ",i);
-        }
+	c = select(sockfd, NULL, &wait_set, NULL, &after);}
+	}
 	else
+	c = 1;
+        if(c < 0)
+        {
         printf("%d Portu Kapalı \n ",i);
+        }
+	else if (c == 0)
+		printf("Zaman asimina ugradi \n");
+	else
+            printf("%d Port açık \n ",i);
 	/*else
 	printf("%d Port açık \n ",i);
 	fcntl(sockfd, F_SETFL, socket_flags);*/
