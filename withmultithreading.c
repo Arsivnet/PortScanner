@@ -5,10 +5,10 @@
 #include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <unistd.h>
 #define DOMAIN "www.google.com" //owner of the ports we're checking.
 #define START 60 //start range of ports
-#define END 90 //last port we're going to check
+#define END 110 //last port we're going to check
 
 typedef struct arguments{
 
@@ -16,31 +16,38 @@ struct addrinfo *res;
 
 int sockfd;
 
-int i;
+int count;
+
 
 } arguments;
 
+int port_state[END - START];
+
 void *ThreadingFun(void* arg){
-	
 	pthread_detach(pthread_self());
-	
 	struct arguments *par = arg;
-        
-	printf("%d portu kontrol ediliyor\n ",par->i);
-        
-	int c = connect(par->sockfd, par->res->ai_addr, par->res->ai_addrlen);
-
+        //par.
+	int c;
+	printf("%d portu kontrol ediliyor %d\n ",par->count, pthread_self() );
+	c = connect(par->sockfd, par->res->ai_addr, par->res->ai_addrlen);
+	sleep(60);
+	//while(c == 900)
+	//{}
         if(c != -1)
-            printf("%d Port açık \n ",par->i);
-        else 
-	printf("%d Portu Kapalı \n ",par->i);
-
-	pthread_join(pthread_self(), NULL);
+        port_state[par->count - START] = 1;
+	//printf("%d portu acik \n", par->i);
+	else 
+        port_state[par->count - START] = 0;
+        //printf("%d portu kapali \n", par->i);
 	pthread_exit(NULL);
 }
 
-int run(void){
+void* run(void* arg){
 
+}
+
+int main(void)
+{
     struct addrinfo hints; //hints basically determines which sockets get to be in res.
     struct addrinfo *res; //sockets we get from getaddrinfo, restricted by the attributes we specified in hints.
     int sockfd;
@@ -63,17 +70,14 @@ int run(void){
 	
 	Parameters.res = res;
 	Parameters.sockfd = sockfd;
-	Parameters.i = i;
-	
+	Parameters.count = i;
+
         pthread_create(&tid, NULL, ThreadingFun, &Parameters);
     }
-
-
-return 0;
+    sleep(60);
+for(int pcounter = START; pcounter< END; pcounter++){
+printf(" port %d : %d \n", pcounter, port_state[pcounter-START]);
 }
 
-int main(void)
-{
-run();
 return 0;
 }
