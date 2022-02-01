@@ -5,13 +5,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DOMAIN "www.google.com" //owner of the ports we're checking.
 #define START 0 //start range of ports
 #define END 100 //last port we're going to check
 
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    
+    if(argc != 2){
+
+		printf("usage: PortScanner hostname\n");
+		return 1;
+}
+    
+    char* DOMAIN = argv[1];
 
     struct addrinfo hints; //hints basically determines which sockets get to be in res.
     struct addrinfo *res; //sockets we get from getaddrinfo, restricted by the attributes we specified in hints.
