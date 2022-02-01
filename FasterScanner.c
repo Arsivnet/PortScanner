@@ -6,13 +6,20 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#define DOMAIN "www.archlinux.org" //owner of the ports we're checking. This could be IP like 192.0.2.33 or domain name like "www.artixlinux.org".
 #define START 78 //start range of ports
 #define END 85 //last port we're going to check
 #define TIMEOUT 1 //amount of seconds you want to wait before giving up on a connection.
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    
+    if(argc != 2){
+
+		printf("usage: PortScanner hostname\n"); //owner of the ports we're checking. This could be IP like 192.0.2.33 or domain name like "www.artixlinux.org".
+		return 1;
+}
+    
+    char* DOMAIN = argv[1];
 
     struct addrinfo hints; //hints basically determines which sockets get to be in res.
     struct addrinfo *res; //sockets we get from getaddrinfo, restricted by the attributes we specified in hints.
