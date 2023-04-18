@@ -1,18 +1,24 @@
 # PortScanner
 A Port Scanner that scans the ports in a given range of a given host with different variations. It's written in C for Linux.
 
-You'll need gcc for compilation. can compile with:
-```
-gcc -o PortScanner Scanner.c
-```
-If you wish to call this program with a different, perhaps shorter, name you can change the "PortScanner" part of the command above with any custom name you wish.
-This applies to the "Example usage" part below this paragraph.
-You can use compilers other than gcc as well.
+Since this is the GUI version, you'll need QT for compilation.
 
-Example usage:
+# Compilation
+In the project directory, run;
 ```
-PortScanner www.google.com
+qmake -project
+
+qmake
 ```
+Then, add this line to the end of the .pro file;
+```
+QT += widgets
+```
+Finally
+```
+make
+```
+Currently, the GUI uses the default "Scanner" code imported to C++. This means it's slower than the version that uses non-blocking sockets. A GUI version that uses the non-blocking sockets will be made in the near future.
 
 -Scanner.c -> works
 The most reliable one. Which is also the slowest.
