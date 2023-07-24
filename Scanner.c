@@ -5,20 +5,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define START 0 //start range of ports
-#define END 100 //last port we're going to check
 
 
 int main(int argc, char* argv[])
 {
     
-    if(argc != 2){
+    if(argc <= 2){
 
-		printf("usage: PortScanner hostname\n");
+		printf("usage: ./PortScanner hostname StartPort EndPort\n");
 		return 1;
 }
     
     char* DOMAIN = argv[1];
+	int START = strtol(argv[2], NULL, 10); //stringToLong helps us convert Char* to int and other things.
+	int END = strtol(argv[3], NULL, 10);
 
     struct addrinfo hints; //hints basically determines which sockets get to be in res.
     struct addrinfo *res; //sockets we get from getaddrinfo, restricted by the attributes we specified in hints.
